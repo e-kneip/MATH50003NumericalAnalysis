@@ -50,18 +50,48 @@ x = range(0, 1; length=n)
 ```
 
 
-**Problem 1.2 (B)** Discretisations can also be used to solve eigenvalue equations.
+**Problem 1.2 (A)** Discretisations can also be used to solve eigenvalue problems.
 Consider the Schrödinger equation with quadratic oscillator:
 $$
 u(-L) = u(L) = 0, -u'' + x^2 u = λ u
 $$
-Approximate the eigenvalues using `eigvals(A)` (which returns the eigenvalues of a
-matrix `A`) with $L = 10$.
-Can you conjecture their exact value if $L = ∞$? (Hint: they are integers and the eigenvalues
-closest to zero are most accurate.)
+(a) Use the finite-difference approximation to discretise this equation as eigenvalues of a
+matrix. Hint: write
+$$
+\begin{align*}
+u(-L) = 0 \\
+-u'' + x^2 u - λu = 0\\
+u(L) = 0
+\end{align*}
+$$
+and discretise as before, doing row eliminations to arrive at a symmetric tridiagonal
+matrix eigenvalue problem. 
+(b) Approximate the eigenvalues using `eigvals(A)` (which returns the eigenvalues of a
+matrix `A`) with $L = 10$. 
+Can you conjecture their exact value if $L = ∞$? Hint: they are integers and the eigenvalues
+closest to zero are most accurate.
 
 **SOLUTION**
-
+We discretise on a grid $u_1,u_2,…,u_n$ for an evenly spaced grid between $[-L,L]$, with
+step size $h = 2L/(n-1)$. That is, we have the equations:
+$$
+\begin{bmatrix}
+1 \\
+-1/h^2 & 2/h^2 + x_2^2  - λ & -1/h^2 \\
+    & ⋱ & ⋱ & ⋱ \\
+    && -1/h^2 &  2/h^2 + x_{n-1}^2  - λ & -1/h^2 \\
+    &&&& 1 \end{bmatrix} 
+    \begin{bmatrix} u_1 \\ \vdots \\ u_n \end{bmatrix} = 0
+$$
+Row eliminations at the top and bottom reduce this equation to:
+$$
+\begin{bmatrix}
+ 2/h^2 + x_2^2   & -1/h^2 \\
+    & ⋱ & ⋱ & ⋱ \\
+    && -1/h^2 &  2/h^2 + x_{n-1}^2   \end{bmatrix} 
+    \begin{bmatrix} u_2 \\ \vdots \\ u_{n-1} \end{bmatrix} = λ\begin{bmatrix} u_2 \\ \vdots \\ u_{n-1} \end{bmatrix} 
+$$
+This is a standard eigenvalue problem and we can compute the eigenvalues using `eigvals`:
 ```julia
 L = 10
 n = 1000
@@ -104,11 +134,11 @@ symmetric tridiagonal matrix.
 **SOLUTION**
 
 We have, with $u(x_k) = u_k$ (and using $\kappa$ instead of $k$ in the equation $u_{xx} + k^2u = f(x)$ so as to avoid confusion with the indices):
-\begin{align}
+\begin{align*}
 \frac{u_2 - u_1}{h} &= c_0, \\
 \frac{u_{k-1} - 2u_k + u_{k+1}}{h^2} + \kappa^2u_k &= f(x_k), \hspace{5mm} \textrm{ for } k=2:n-1\\
 \frac{u_n - u_{n-1}}{h} &= c_1, 
-\end{align}
+\end{align*}
 which we write in matrix form as:
 
 $$
@@ -137,7 +167,9 @@ $$
 \end{matrix}\right],
 $$
 
-## 2. Convergence
+
+
+## 2. Convergence
 
 **Problem 2.1⋆ (B)** For the equation
 $$
@@ -156,7 +188,7 @@ $$
 **SOLUTION**
 Using the approximation from PS6 we obtain
 
-$${(f(x_{k+1}) + f(x_k))\over 2} = {( u’(x_{k+1}) + u'(x_k) )\over 2} + {a(u(x_{k+1}) +  u(x_k)) \over 2}≈ {(u_{k+1} - u_k ) \over h} + {a u_{k+1}\over 2} + {a u_k \over 2}$$
+$${f(x_{k+1}) + f(x_k)\over 2} = { u'(x_{k+1}) + u'(x_k) \over 2} + {a(u(x_{k+1}) +  u(x_k)) \over 2}≈ {(u_{k+1} - u_k ) \over h} + {a u_{k+1}\over 2} + {a u_k \over 2}$$
 
 So we get
 
@@ -186,38 +218,55 @@ Now, similarly to Euler's methods convergence theorem, we study consistency and 
 ##### Consistency:
 Our discretisation approximates the true equation.
 
-$$\hat Lu = \begin{bmatrix} c_0 \\
+$$
+\begin{align*}
+L̂ u &= \begin{bmatrix} c_0 \\
 {u(x_1) - u(x_0) \over h} + {a\over2}(u(x_1) + u(x_0)) \\
-\vdots \\
+⋮ \\
 {u(x_{n-1}) - u(x_{n-2}) \over h}  + {a\over2}(u(x_{n-1}) + u(x_{n-2}))\end{bmatrix}
 = \begin{bmatrix} c_0 \\
 \frac{1}{2}\left({u(x_1) - u(x_0) \over h} +{u(x_1) - u(x_0) \over h} + {a}(u(x_1) + u(x_0))\right) \\
-\vdots \\
-\frac{1}{2}\left({u(x_{n-1}) - u(x_{n-2}) \over h} + {u(x_1) - u(x_0) \over h} + {a}(u(x_{n-1}) + u(x_{n-2}))\right)\end{bmatrix}
-= \begin{bmatrix} c_0 \\
-\frac{1}{2}\left(u'(x_0) + a u(x_0) + u''(τ_0) h + u'(x_1) + a u(x_1) + u''(\sigma_1) h \right)\\
-\vdots \\
-\frac{1}{2}\left(u'(x_{n-2}) + a u(x_{n-2}) + u''(τ_{n-2}) h + u'(x_{n-1}) + a u(x_{n-1}) + u''(\sigma_{n-1}) h \right) \end{bmatrix} = 
+⋮ \\
+\frac{1}{2}\left({u(x_{n-1}) - u(x_{n-2}) \over h} + {u(x_1) - u(x_0) \over h} + {a}(u(x_{n-1}) + u(x_{n-2}))\right)\end{bmatrix} \\
+&= \begin{bmatrix} c_0 \\
+\frac{1}{2}\left(u'(x_0) + a u(x_0) + u''(τ_0) h + u'(x_1) + a u(x_1) + u''(σ_1) h \right)\\
+⋮ \\
+\frac{1}{2}\left(u'(x_{n-2}) + a u(x_{n-2}) + u''(τ_{n-2}) h + u'(x_{n-1}) + a u(x_{n-1}) + u''(σ_{n-1}) h \right) \end{bmatrix} = 
 \begin{bmatrix} c_0 \\
-{f(x_0)+f(x_1)\over 2} + {u''(τ_0)+u''(\sigma_1)\over 2} h \\
-\vdots \\
-{f(x_{n-2})+f(x_{n-1})\over 2} + {u''(τ_{n-2})+u''(\sigma_{n-1})\over 2} h \end{bmatrix} = 
-\begin{bmatrix} c_0 \\ \hat fᶠ \end{bmatrix} + \begin{bmatrix} 0 \\ δ \end{bmatrix}$$
+{f(x_0)+f(x_1)\over 2} + {u''(τ_0)+u''(σ_1)\over 2} h \\
+⋮ \\
+{f(x_{n-2})+f(x_{n-1})\over 2} + {u''(τ_{n-2})+u''(σ_{n-1})\over 2} h \end{bmatrix} \\
+&= 
+\begin{bmatrix} c_0 \\ \hat fᶠ \end{bmatrix} + \begin{bmatrix} 0 \\ δ \end{bmatrix}
+\end{align*}
+$$
 
-where $x_k ≤ τ_k, \sigma_k ≤ x_{k+1}$, and uniform boundedness implies that $\|δ\|_∞ = O(h)$
+where $x_k ≤ τ_k, σ_k ≤ x_{k+1}$, and uniform boundedness implies that $\|δ\|_∞ = O(h)$
 
 ##### Stability:
 The inverse does not blow up the error.
 
-$$\hat L = \underbrace{\begin{bmatrix} 1 \\ & \left({a\over 2} + {1 \over h}\right)^{-1} \\ && ⋱ \\ &&& \left({a\over 2} + {1 \over h}\right)^{-1}  \end{bmatrix}}_D \underbrace{\begin{bmatrix} 1 \\ \left({a\over 2} + {1 \over h}\right)\left({a\over 2} - {1 \over h}\right)  & 1 \\ & ⋱ & ⋱ \\ && \left({a\over 2} + {1 \over h}\right)\left({a\over 2} - {1 \over h}\right) &1 \end{bmatrix}}_{ L}$$
+$$
+\hat L = \underbrace{\begin{bmatrix} 1 \\ & \left({a\over 2} + {1 \over h}\right) \\ && ⋱ \\ &&& \left({a\over 2} + {1 \over h}\right)  \end{bmatrix}}_D 
+\underbrace{\begin{bmatrix} 1 \\ \left({a\over 2} + {1 \over h}\right)^{-1}\left({a\over 2} - {1 \over h}\right)  & 1 \\ & ⋱ & ⋱ \\ && \left({a\over 2} + {1 \over h}\right)^{-1}\left({a\over 2} - {1 \over h}\right) &1 \end{bmatrix}}_{ L}
+$$
 
-Thus, we have $\| L^{-1}\|_{1 → ∞} ≤ \left|{a^2\over 4} - {1 \over h^2}\right|^{-(n-1)} ≤ \left|{a^2\over 4} - {n^2}\right|^{-(n-1)} \left|{4\over a^2 + 4n^2}\right|^{n-1}
- = O(1)$
- 
-Note that $\left|{a\over 2} + {1 \over h}\right|^{-1} = \left|{h \over {ah \over 2} + 1}\right|\le 2h$, as $h\to 0$ (taking $h$ small enough)
-
-Combining stability and consistency we have
-$$\|𝐮ᶠ - 𝐮\|_∞  = \|\hat L^{-1} (\hat L𝐮ᶠ - \hat L𝐮)\|_∞  = \| L^{-1} D^{-1} \begin{bmatrix} 0 \\ δ \end{bmatrix} \|_∞ ≤ 2h \| L^{-1}\|_{1 → ∞} \|δ\|_1 = O(h)$$
+Thus, we have 
+$$
+\| L^{-1}\|_{1 → ∞} ≤ \left|
+ \left({a\over 2} + {1 \over h}\right)^{-1}\left({a\over 2} - {1 \over h}\right)
+\right|^{n-1} = O(1)
+$$
+as $n → ∞$, where one can take logarithms and use L'Hopitals rule to show that it actually tends to a limit.
+Note that 
+$$
+\left|{a\over 2} + {1 \over h}\right|^{-1} = \left|{h \over {ah \over 2} + 1}\right|\le 2h
+$$
+for sufficiently small $h$ (or large $n$).
+Combining stability and consistency we have, for sufficently small $h$,
+$$
+\|𝐮ᶠ - 𝐮\|_∞  = \|\hat L^{-1} (\hat L𝐮ᶠ - \hat L𝐮)\|_∞  = \| L^{-1} D^{-1} \begin{bmatrix} 0 \\ δ \end{bmatrix} \|_∞ ≤ 2h \| L^{-1}\|_{1 → ∞} \|δ\|_1 = O(h).
+$$
 
 **Problem 2.2⋆ (A)** Consider the matrices
 $$
@@ -274,32 +323,13 @@ a^3 & a^2 & a & 1 & 0 & ... & 0\\
 a^{n-1} & a^{n-2} & ... & ... & a^2 & a & 1 
 \end{bmatrix}$$
 
-Then, $\forall x$
+From PS5 Q2.1 we have
+$$
+\|T^{-1}\|_{1 → ∞} = \| {\rm vec}(T^{-1})\|_∞ = \max(1,a)^{n-1}
+$$
+Since $a_k ≤ a$ we have $\prod_{i=1}^{n-1}|a_i|≤ a^{n-1}$ hence
 
-$$\|T^{-1}x\|_{\infty}=\max_i|(T^{-1}x)_i|= \max_i \left|x_i +\sum_{j=1}^{i-1}a^{i-j}x_j \right| = \begin{cases} 
-1 & if \ a\in[0,1] \\
-a^{n-1} & if \ a\ge 1
-\end{cases}$$
-
-since, given $b=\max\{1,a\}$,
-
-$$\max_i \left|x_i +\sum_{j=1}^{i-1}a^{i-j}x_j \right|\le \max_i \left(|x_i| +\sum_{j=1}^{i-1}\left|a^{i-j}x_j \right| \right) \le b^n\sum_{j=1}^n |x_j| = b^n\|x\|_1$$
-
-thus,
-
-$\|T^{-1}\|_{1\to\infty} = \sup_{x\ne 0} \frac{\|T^{-1}x\|_\infty}{\|x\|_1}\le b^n$ and, in particular,
-$$\|T^{-1}\|_{1\to\infty}= b^n$$
-
-since $$\frac{|T^{-1}x|_\infty}{\|x\|_1}=b^n$$ it is obtained using 
-$$x=\begin{cases}e_1 & b=1 \\ e_n & b=a \end{cases}$$
-
-Moreover, $|a_j|\le b$, $\forall j=1,...,n$, thus,
-
-$$\|L^{-1}x\|_{\infty}=\max_i|(L^{-1}x)_i|= \max_i \left|x_i +\sum_{j=1}^{i-1}a_{j}...a_{i-1}x_j \right| \le \max_i |x_i| +\sum_{j=1}^{i-1}|a_{j}...a_{i-1}x_j | \le b^n\|x\|_1$$
-
-Hence,
-
-$$\|L^{-1}\|_{1\to \infty}=\sup_{x} \frac{\|L^{-1}x\|_{\infty}}{\|x\|_{1}} \le b^n = \|T^{-1}\|_{1 \to \infty}$$
+$$\|L^{-1}\|_{1\to \infty} ≤ \max(1,a)^n = \|T^{-1}\|_{1 \to \infty}.$$
 
 
 Now we prove convergence for the forward Euler method as $n → ∞$ for
@@ -364,46 +394,79 @@ $$
 Hint: You may wish to try the change of variables $z = {\rm e}^{-{\rm i}θ}$.
 
 **SOLUTION**
-The explicit formulae for $f̂ₖ$ can be found by direct computation. Making use of trigonometric identities and noting that cos x and sin x are even and odd respectively on a periodic interval, hence orthogonal
 
-  1) $$f̂ₖ = \frac{1}{2π} \int^{2π}_{0} \cos θ \exp^{-ikθ} dθ = \frac{1}{2π} \int^{2π}_{0} ( \cos θ \cos kθ ) dθ $$
-  For $k=1$, yields
-      $$f̂ₖ = \frac{1}{2π} \int^{2π}_{0} \cos^2 θ dθ = \frac{1}{2}$$
-  and $k \neq 1$ using standard trigonometric identity
-  $$f̂ₖ = \frac{1}{4π} \int^{2π}_{0} \cos{θ(1-k)} + \cos{θ(1+k)} dθ = 0$$
-
-  2) similar to 1), replace cases $k =,\neq 1$ by $k =, \neq 4$ 
-  
-  3) Either use Euler's formula to expand $\sin^4θ$ into exponentials or use the identity $$ sin^4 θ = \frac{3 - 4 \cos 2θ + \cos 4 θ}{8} $$
-  Noting that $\sin^4 θ$ is an even function yields $$f̂ₖ = \frac{1}{2π} \int^{2π}_{0} \sin^4 θ \exp^{-ikθ} dθ = \frac{1}{2π} \int^{2π}_{0} ( \sin^4 θ \cos kθ ) dθ $$
-  Using the above identity we need to take care of the case $k \neq 2,4$, which is zero as we have seen in 1). For special cases  $k = 2, 4$ we have $f̂_2 = - \frac{1}{4}$ and $f̂_4 = \frac{1}{16}$.
-
-  4) We will have to separate the cases $k<0$ and $k \geq 0$.
-  
-  ($k \geq 0$) Make the substition $z = {3\rm e}^{-{\rm i}θ}$ and integrating over the contour of the circle of radius 3
-  $$f̂ₖ = \frac{-i}{2π}\frac{1}{3^{k+1}} \int_{|z|=3} {z^k \over 1 - z} dz $$
-  then by the residue theorem yields $f̂ₖ = \frac{1}{3^{k}}$.
-  
-  ($k<0$) Make the substition $z = {\rm e}^{{\rm i}θ}$ and observe that the pole lies outside of the contour of radius $1$, hence $f̂ₖ = 0$ for all $k<0$.
-  
-  5) We will have to separate the cases $k<0$ and $k \geq 0$. 
-  
-  ($k \geq 0$) Make the substition $z = \frac{{\rm e}^{-{\rm i}θ}}{2}$ and observe that the pole lies outside of the contour of radius $\frac{1}{2}$ , hence $f̂ₖ = 0$ for all $k \geq 0$.
-  
-  ($k<0$) Make the substition $z = {2 \rm e}^{{\rm i}θ}$ and integrating over the contour of the circle of radius 2
-  $$f̂ₖ = \frac{i}{2π}\frac{1}{2^{k+1}} \int_{|z|=2} {z^{k-1} \over z - 1} dz $$
-  then by the residue theorem yields $f̂ₖ = \frac{-1}{2^{|k|}}$.
-  
-For the student unfamiliar with complex analysis:
-    
-   4*) Substitute for $z = \frac{{\rm e}^{-{\rm i}θ}}{3}$ such that $f(θ) = \frac{1}{1-z}$
-   then write the function as a geometric series $\Sigma_j z^j$ plug in
-   
-   $$f̂ₖ = \frac{1}{2π3^{j}} \int^{2π}_{0} \Sigma_j {\rm e}^{iθ(j-k)} dθ $$
-   
-   and finally use the Lemma "Discrete orthogonality" from the lecture notes to show the result above.
-   
-   5*) Similar idea to 4) however notice that this time we only have non-zero contributions for $k<0$.
+1. Just expand in complex exponentials to find that
+$$
+\cos θ = {\exp({\rm i} θ) + \exp(-{\rm i} θ) \over 2}
+$$
+that is $f̂_1 = f̂_{-1} = 1/2$, $f̂_k = 0$ otherwise.
+Therefore for $p∈ ℤ$ we have
+$$
+\begin{align*}
+f̂_k^1 &= f̂_1 + f̂_{-1} = 1 \\
+f̂_{2p}^2 &= 0, f̂_{2p+1}^2 = f̂_1 + f̂_{-1} = 1 \\
+f̂_{1+np}^n &= f̂_{-1+np}^n = 1/2, f̂_k^n = 0 \hbox{otherwise} \\
+\end{align*}
+$$
+2. Similarly
+$$
+\cos 4 θ = {\exp(4{\rm i} θ) + \exp(-4{\rm i} θ) \over 2}
+$$
+that is $f̂_4 = f̂_{-4} = 1/2$, $f̂_k = 0$ otherwise.
+Therefore for $p∈ ℤ$ we have
+$$
+\begin{align*}
+f̂_p^1 &= f̂_4 + f̂_{-4} = 1 \\
+f̂_{2p}^2 &= f̂_4 + f̂_{-4} = 1, f̂_{2p+1}^2 = 0 \\
+f̂_{3p}^3 &= 0, f̂_{3p±1}^3 = f̂_{±4} =1/2 \\
+f̂_{4p}^4 &= f̂_{-4} + f̂_4 = 1, f̂_{4p±1}^4 = 0,  f̂_{4p+2}^4 = 0 \\
+f̂_{5p}^5 &= 0, f̂_{5p+1}^5 = f̂_{-4} = 1/2, f̂_{5p-1}^5 = f̂_{4} = 1/2,  f̂_{5p±2}^5 =0  \\
+f̂_{6p}^6 &=0, f̂_{6p±1}^6 = 0,  f̂_{6p+2}^6 = f̂_{-4} = 1/2,  f̂_{6p-2}^6 = f̂_{4} = 1/2, f̂_{6p+3}^6 =0  \\
+f̂_{7p}^7 &= 0, f̂_{7p±1}^7 = 0,  f̂_{7p±2}^7 = 0, f̂_{7p±3}^7 = f̂_{∓4} = 1/2 \\
+f̂_{8p}^8 &= f̂_{8p±1}^8 = f̂_{8p±2}^8 =  f̂_{8p±3}^8 = 0, f̂_{8p+4}^8 = f̂_4 + f̂_{-4} = 1 \\
+f̂_{k+pn}^n &= f̂_k \hbox{ for $-4 ≤ k ≤ 4$, 0 otherwise}.
+\end{align*}
+$$
+3. Here we have:
+$$
+(\sin θ)^4= \left({\exp({\rm i} θ) - \exp(-{\rm i} θ) \over 2 {\rm i}}\right)^4
+= \left({\exp(2{\rm i} θ) -2 + \exp(-2{\rm i} θ) \over -4}\right)^2
+= {\exp(4{\rm i} θ) -4\exp(2{\rm i} θ) +6 -4 \exp(-2{\rm i} θ)+\exp(-2{\rm i} θ) \over 16}
+$$
+that is $f̂_{-4} = f̂_4 = 1/16$, $f̂_{-2} = f̂_2 = -1/4$, $f_0 = 3/8$, $f̂_k = 0$ otherwise.
+Therefore for $p∈ ℤ$ we have
+$$
+\begin{align*}
+f̂_p^1 &=f̂_{-4} + f̂_{-2} + f̂_0 + f̂_2 +  f̂_4 = 0 \\
+f̂_k^2 &= 0 \\
+f̂_{3p}^3 &= f̂_0 = 3/8, f̂_{3p+1}^3 = f̂_{-2} + f̂_4 =-3/16,  f̂_{3p-1}^3 = f̂_{2} + f̂_{-4} =-3/16 \\
+f̂_{4p}^4 &= f̂_0 + f̂_{-4} + f̂_4 = 1/2, f̂_{4p±1}^4 = 0,  f̂_{4p+2}^4 = f̂_{2} + f̂_{-2} =-1/2 \\
+f̂_{5p}^5 &= f̂_0 = 3/8, f̂_{5p+1}^5 = f̂_{-4} = 1/16, f̂_{5p-1}^5 = f̂_{4} = 1/16,  f̂_{5p+2}^5 = f̂_2 = -1/4, f̂_{5p-2}^5 = f̂_{-2} = -1/4  \\
+f̂_{6p}^6 &= f̂_0 = 3/8, f̂_{6p±1}^6 = 0,  f̂_{6p+2}^6 = f̂_2 + f̂_{-4} = -3/16,  f̂_{6p-2}^6 = f̂_{-2} + f̂_{4} = -3/16, f̂_{6p+3}^6 =0  \\
+f̂_{7p}^7 &= f̂_0 = 3/8, f̂_{7p±1}^7 = 0,  f̂_{7p±2}^7 = f̂_{±2} = -1/4, f̂_{7p±3}^7 = f̂_{∓4} = 1/16 \\
+f̂_{8p}^8 &= f̂_0 = 3/8, f̂_{8p±1}^8 = 0,  f̂_{8p±2}^8 = f̂_{±2} = -1/4, f̂_{8p±3}^8 = 0, f̂_{8p+4}^8 = f̂_4 + f̂_{-4} = 1/8 \\
+f̂_{k+pn}^n &= f̂_k \hbox{ for $-4 ≤ k ≤ 4$, 0 otherwise}.
+\end{align*}
+$$
+4. Under the change of variables $z = {\rm e}^{{\rm i}θ}$ we can use Geoemtric series to determine
+$$
+{3 \over 3 - z} = {1 \over 1- z/3} = ∑_{k=0}^∞ {z^k \over 3^k}
+$$
+That is $f̂_k = 1/3^k$ for $k ≥ 0$, and $f̂_k = 0$ otherwise.
+We then have for $0 ≤ k ≤ n-1$
+$$
+f̂_{k+pn}^n = ∑_{ℓ=0}^∞ {1 \over 3^{k+ℓn}} = {1 \over 3^k} {1 \over 1 - 1/3^n} = {3^n \over 3^{n+k} - 3^k}
+$$
+5. Now make the change of variables $z = {\rm e}^{-{\rm i} θ}$ to get:
+$$
+{1 \over 1 - 2/z} = {1 \over -2/z} {1 \over 1 - z/2} = {1 \over -2/z} ∑_{k=0}^∞ {z^k \over 2^k}
+= - ∑_{k=1}^∞ {{\rm e}^{-{\rm i} k θ} \over 2^k}
+$$
+That is $f̂_k = -1/2^{-k}$ for $k ≤ -1$ and 0 otherwise.
+We then have for $-n ≤ k ≤ -1$
+$$
+f̂_{k+pn}^n =- ∑_{ℓ=0}^∞ {1 \over 2^{-k+ℓn}} = -{1 \over 2^{-k}} {1 \over 1 - 1/2^n} = -{2^{n+k} \over 2^n - 1}
+$$
 
 **Problem 3.2⋆ (B)** Prove that if the first $λ-1$ derivatives $f(θ), f'(θ), …, f^{(λ-1)}(θ)$ 
 are 2π-periodic and $f^{(λ)}$ is uniformly bounded  that
@@ -450,7 +513,7 @@ are 2π-periodic and $f^{(λ)}$ is uniformly bounded?
 
 Observe that by aliasing (see corollary in lecture notes) and triangle inequality we have the following 
 
-$$ |f̂_k^n - f̂_k|  \leq \sum_{p=1}^{\infty} (|f̂_{k+pm}|+|f̂_{k-pm}|) $$
+$$ |f̂_k^n - f̂_k|  \leq \sum_{p=1}^{\infty} (|f̂_{k+pn}|+|f̂_{k-pn}|) $$
 
 Using the result from Problem 3.2 yields
 
@@ -469,3 +532,16 @@ Finally let $q = \pm \frac{k}{n}$ to achieve the rate of convergence
 $$ |f̂_k^n - f̂_k| \leq \frac{C_{\lambda}}{ n^{\lambda}} \left(  \left( \frac{1}{2} + k/n \right)^{ - \lambda + 1} + \left( \left( \frac{1}{2} - k/n \right) \right)^{- \lambda +1} \right)$$
 
 where $C_{\lambda}$ is a constant depending on $\lambda$. Note that it is indeed important to split the $n$ coefficients equally over the negative and positive coefficients as stated in the notes, due to the estatime we used above.
+
+Finally, we have (thanks to Anonymous on ed):
+$$
+\begin{align*}
+|f(\theta) - f_{-m:m}(\theta)|
+&= |\sum_{k=-m}^m {(f̂_k - f̂_k^n)z^k} + \sum_{k=m+1}^\infty {f̂_k z^k}  + \sum_{k=-\infty}^{-m-1} {f̂_k z^k} | \\
+&\le \sum_{k=-m}^m | f̂_k - f̂_k^n | + \sum_{k=m+1}^\infty |f̂_k| +  \sum_{k=-\infty}^{-m-1} |f̂_k| \\
+&\le \sum_{k=-m}^m {\frac{C_{\lambda}}{ n^{\lambda}} \left( \left( \frac{1}{2} + k/n \right)^{ - \lambda + 1} + \left( \left( \frac{1}{2} - k/n \right) \right)^{- \lambda +1} \right)} + \sum_{k=m+1}^\infty |f̂_k| +  \sum_{k=-\infty}^{-m-1} |f̂_k| \\
+&= \frac{C_{\lambda}}{n^{\lambda}} 2^{\lambda} + \sum_{k=m+1}^\infty |f̂_k| +  \sum_{k=-\infty}^{-m-1} |f̂_k|  \\
+&= O(n^{-\lambda}) + O(n^{1-\lambda} ) + O(n^{1-\lambda} ) \\
+&= O(n^{1-\lambda}) 
+\end{align*}
+$$

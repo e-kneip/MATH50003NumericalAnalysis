@@ -46,10 +46,10 @@ with respect to a prescribed weight.
 
 ## Assessment
 
-1. [Practice computer-based exam](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/practice.ipynb) ([Solutions](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/practices.ipynb))
-2. Computer-based exam (released on Blackboard): 18 March 2022, 3–5pm (1 hour exam, 1 hour upload/download)
-3. Practice final exam (pen-and-paper, not for credit): Summer Term (TBC)
-3. Final exam (pen-and-paper): Summer Term (TBC)
+1. [Practice computer-based exam](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/exams/practice.ipynb) ([Solutions](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/exams/practices.ipynb))
+2. [Computer-based exam](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/exams/computerexam.ipynb) ([Solutions](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/exams/computerexams.ipynb))
+3. [Practice final exam](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/exams/practicefinal.pdf)
+3. Final exam (pen-and-paper): 9 May 2022, 9:00–12:00
 
 ## Problem sheets
 
@@ -62,10 +62,12 @@ with respect to a prescribed weight.
 Condition numbers, indefinite integration, and Euler methods
 5. [Week 7](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week7.ipynb) ([Solutions](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week7s.ipynb)): 
 Two point boundary value problems, convergence, and Fourier series
-5. [Week 8](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week8.ipynb): 
+5. [Week 8](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week8.ipynb) ([Solutions](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week8s.ipynb)): 
 Discrete Fourier Transform (DFT), Fast Fourier Transform (FFT), and Orthogonal Polynomials.
-5. [Week 9](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week9.ipynb): 
-Jacobi matrices, classical orthogonal polynomials and interpolation.
+5. [Week 9](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week9.ipynb) ([Solutions](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week9s.ipynb)): 
+Jacobi matrices, classical orthogonal polynomials, and interpolation.
+5. [Week 10](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week10.ipynb)  ([Solutions](https://github.com/Imperial-MATH50003/MATH50003NumericalAnalysis/blob/main/sheets/week10s.ipynb)): 
+Orthogonal polynomial roots, interpolatory quadrature, and Gaussian quadrature.
 
 
 Additional problem sheets:
@@ -104,6 +106,18 @@ Additional problem sheets:
 7. [Condition Numbers](lectures/ConditionNumbers.jpg)
 7. [Indefinite Integration](lectures/IndefiniteIntegration.jpg)
 7. [Euler Method](lectures/EulerMethod.jpg)
+7. [Poisson Equation](lectures/Poisson.jpg)
+7. [Convergence of Euler Methods](lectures/Convergence.jpg)
+7. [Fourier Series](lectures/Fourier.jpg)
+7. [Trapezium Rule and Fourier Coefficients](lectures/TrapeziumRule.jpg)
+7. [Discrete Fourier Transform](lectures/DFT.jpg)
+7. [Fast Fourier Transform](lectures/FFT.jpg)
+7. [Jacobi Matrices](lectures/JacobiMatrices.jpg)
+7. [Classical Orthogonal Polynomials](lectures/ClassicalOPs.jpg)
+7. [Polynomial Interpolation](lectures/Interpolation.jpg)
+7. [Orthogonal Polynomial Roots](lectures/OPRoots.jpg)
+7. [Interpolatory Quadrature](lectures/InterpolatoryQuadrature.jpg)
+7. [Gaussian Quadrature](lectures/GaussianQuadrature.jpg)
 
 
 
