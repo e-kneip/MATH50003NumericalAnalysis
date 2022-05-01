@@ -175,7 +175,7 @@ $$
 **Proof**
 $$
 \begin{align*}
-f̂_k^n &= Σ_n[f(θ) {\rm e}^{-i k θ}] = ∑_{j=-∞}^∞ f̂_j Σ_n[f(θ) {\rm e}^{i (j-k) θ}] \\
+f̂_k^n &= Σ_n[f(θ) {\rm e}^{-i k θ}] = ∑_{j=-∞}^∞ f̂_j Σ_n[{\rm e}^{i (j-k) θ}] \\
 &= ∑_{j=-∞}^∞ f̂_j \begin{cases} 1 & j-k = \ldots,-2n,-n,0,n,2n,\ldots  \cr
 0 & \hbox{otherwise}
 \end{cases}
@@ -548,7 +548,7 @@ $$
 We can use the FFT to compute $S_n(0), …, S_n(n-1)$ in $O(n \log n)$ operations.
 Consider
 $$
-f(θ) = \exp({\rm e}^{{\rm i} θ}) = ∑_{k=0}^∞ {{\rm e}^{{\rm i} θ} \over k!}
+f(θ) = \exp({\rm e}^{{\rm i} θ}) = ∑_{k=0}^∞ {{\rm e}^{{\rm i} k θ} \over k!}
 $$
 where we know the Fourier coefficients from the Taylor series of ${\rm e}^z$. 
 The discrete Fourier coefficients satisfy for $0 ≤ k ≤ n-1$:
